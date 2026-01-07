@@ -1,152 +1,152 @@
 # Peukan Rumoh - Mobile App (Buyer)
 
-Aplikasi mobile Flutter untuk pembeli di platform e-commerce Peukan Rumoh. Aplikasi ini terhubung dengan backend Laravel yang sudah ada dan menggunakan API yang sama.
+Aplikasi mobile Flutter untuk pembeli di platform e-commerce Peukan Rumoh. Aplikasi ini terhubung dengan backend Laravel dan menggunakan REST API.
 
 ## 🚀 Fitur Utama
 
-- **Autentikasi**: Login dan Register
-- **Katalog Produk**: Tampilan grid produk dengan gambar, harga, dan stok
-- **Detail Produk**: Informasi lengkap produk dengan opsi tambah ke keranjang
-- **Keranjang Belanja**: Kelola item keranjang (tambah, hapus, update jumlah)
-- **Checkout**: Form pengisian alamat dan metode pembayaran
-- **Riwayat Pesanan**: Lihat semua pesanan yang pernah dibuat
+### Autentikasi
+- ✅ Login & Register
+- ✅ Logout dengan token management
+- ✅ Auto-login dengan token tersimpan
+
+### Belanja
+- ✅ Katalog produk dengan filter kategori
+- ✅ Detail produk dengan gambar, deskripsi, dan stok
+- ✅ Keranjang belanja (tambah, hapus, update quantity)
+- ✅ Checkout dengan form alamat dan catatan
+- ✅ Pilihan metode pembayaran (COD, Transfer, E-Wallet)
+
+### Pesanan
+- ✅ Riwayat pesanan dengan status badge
+- ✅ Konfirmasi penerimaan pesanan
+- ✅ **Review produk** dengan rating bintang (1-5)
+- ✅ **Request return** dengan upload foto bukti
+- ✅ Konfirmasi barang pengganti/refund
+- ✅ Status return terintegrasi
+
+### Profil
+- ✅ Edit profile (nama, telepon, alamat)
+- ✅ Ganti password
+- ✅ Dark/Light mode toggle
 
 ## 📁 Struktur Folder
 
 ```
 lib/
-├── models/              # Model data (User, Product, Cart, Order)
+├── config/              # API Configuration
+│   └── api_config.dart
+├── models/              # Model data
+│   ├── user.dart
+│   ├── product.dart
+│   ├── cart_item.dart
+│   └── order.dart       # Termasuk ProductReturn
 ├── providers/           # State management dengan Provider
 │   ├── auth_provider.dart
 │   ├── cart_provider.dart
-│   └── product_provider.dart
+│   ├── product_provider.dart
+│   └── theme_provider.dart
 ├── services/            # API service layer
 │   └── api_service.dart
 ├── screens/             # UI Screens
 │   ├── auth/            # Login & Register
 │   ├── home/            # Home & Product Detail
 │   ├── cart/            # Shopping Cart
-│   ├── checkout/        # Checkout
-│   └── orders/          # Order History & Success
+│   ├── checkout/        # Checkout & Payment
+│   ├── orders/          # Order History, Review, Return
+│   └── settings/        # Profile & Settings
+├── widgets/             # Reusable Widgets
 └── main.dart            # Entry point
 ```
 
 ## ⚙️ Setup & Instalasi
 
-### 1. Pastikan Flutter Sudah Terinstall
+### 1. Install Dependencies
 
 ```bash
-flutter --version
-```
-
-### 2. Install Dependencies
-
-```bash
-cd mobile_app_buyer
 flutter pub get
 ```
 
-### 3. Konfigurasi API URL
+### 2. Konfigurasi API URL
 
-Buka file `lib/services/api_service.dart` dan sesuaikan `baseUrl` dengan environment Anda:
+Buka file `lib/config/api_config.dart`:
 
 ```dart
-// Untuk Android Emulator
-static const String baseUrl = 'http://10.0.2.2:8000/api';
-
-// Untuk iOS Simulator
-// static const String baseUrl = 'http://localhost:8000/api';
-
-// Untuk Physical Device (ganti dengan IP komputer Anda)
-// static const String baseUrl = 'http://YOUR_IP_ADDRESS:8000/api';
+class ApiConfig {
+  // Production
+  static const String baseUrl = 'https://peukanrumoh.sisteminformasikotacerdas.id';
+  
+  // Development (uncomment untuk local testing)
+  // static const String baseUrl = 'http://10.0.2.2:8000';  // Android Emulator
+  // static const String baseUrl = 'http://localhost:8000'; // iOS Simulator
+}
 ```
 
-### 4. Jalankan Laravel Backend
-
-Pastikan Laravel backend sudah berjalan:
+### 3. Jalankan Flutter App
 
 ```bash
-# Di folder Laravel
-php artisan serve
-```
-
-### 5. Jalankan Flutter App
-
-```bash
-# Pastikan emulator/device sudah terhubung
-flutter devices
-
-# Jalankan aplikasi
+# Debug mode
 flutter run
+
+# Build APK
+flutter build apk --release
 ```
 
-## 📝 API Endpoints yang Digunakan
+## 📝 API Endpoints
 
 ### Authentication
-- `POST /api/register` - Daftar user baru
-- `POST /api/login` - Login user
-- `POST /api/logout` - Logout user
-- `GET /api/user` - Get user data
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| POST | `/api/register` | Daftar user baru |
+| POST | `/api/login` | Login user |
+| POST | `/api/logout` | Logout user |
+| GET | `/api/user` | Get user data |
+| PUT | `/api/user/update` | Update profile |
+| PUT | `/api/user/change-password` | Ganti password |
 
 ### Products
-- `GET /api/products` - List semua produk
-- `GET /api/products/{id}` - Detail produk
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| GET | `/api/products` | List produk |
+| GET | `/api/products/{id}` | Detail produk |
 
 ### Cart
-- `GET /api/cart` - List item keranjang
-- `POST /api/cart` - Tambah ke keranjang
-- `PUT /api/cart/{id}` - Update quantity
-- `DELETE /api/cart/{id}` - Hapus item
-- `DELETE /api/cart` - Kosongkan keranjang
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| GET | `/api/cart` | List keranjang |
+| POST | `/api/cart` | Tambah ke keranjang |
+| PUT | `/api/cart/{id}` | Update quantity |
+| DELETE | `/api/cart/{id}` | Hapus item |
 
 ### Orders
-- `GET /api/orders` - Riwayat pesanan
-- `POST /api/orders` - Buat pesanan baru (checkout)
-- `GET /api/orders/{id}` - Detail pesanan
-- `POST /api/orders/{id}/payment` - Konfirmasi pembayaran
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| GET | `/api/orders` | Riwayat pesanan |
+| POST | `/api/orders` | Buat pesanan baru |
+| POST | `/api/orders/{id}/payment` | Konfirmasi pembayaran |
+| POST | `/api/orders/{id}/confirm-delivery` | Konfirmasi diterima |
+| POST | `/api/orders/{id}/review` | Submit review |
+| POST | `/api/orders/{id}/return` | Request return |
+| POST | `/api/orders/{id}/confirm-replacement` | Konfirmasi pengganti |
+| POST | `/api/orders/{id}/confirm-refund` | Konfirmasi refund |
 
-## 🔐 State Management
+## 🛠️ Tech Stack
 
-Aplikasi ini menggunakan **Provider** untuk state management:
+| Komponen | Teknologi |
+|----------|-----------|
+| Framework | Flutter 3.x |
+| Language | Dart 3.x |
+| State Management | Provider |
+| HTTP Client | Dio |
+| Local Storage | SharedPreferences |
+| Image Picker | image_picker |
 
-- **AuthProvider**: Mengelola status autentikasi user
-- **ProductProvider**: Mengelola data produk
-- **CartProvider**: Mengelola keranjang belanja
+## 👥 Tim Pengembang
 
-## 🎨 UI/UX
-
-- Material Design 3
-- Responsive layout
-- Loading states
-- Error handling
-- Form validation
-
-## 📱 Tested On
-
-- Android Emulator (API 33)
-- Flutter 3.38.5
-- Dart 3.10.4
-
-## ⚠️ Catatan Penting
-
-1. **CORS**: Pastikan Laravel sudah dikonfigurasi untuk menerima request dari mobile app
-2. **Network Permission**: Sudah otomatis ditambahkan di Android manifest
-3. **HTTPS**: Untuk production, gunakan HTTPS endpoint
-
-## 🐛 Troubleshooting
-
-### Tidak bisa connect ke API
-- Pastikan Laravel backend sudah running
-- Cek URL di `api_service.dart` sudah benar
-- Untuk Android emulator, gunakan `10.0.2.2` bukan `localhost`
-
-### Image tidak muncul
-- Pastikan folder `storage` sudah di-link: `php artisan storage:link`
-- Cek path image di backend
-
-### Login gagal
-- Cek response dari API di console
-- Pastikan role user adalah 'pembeli'
+| Nama | Role |
+|------|------|
+| Nashrullah Al Himni | Pengembang Inti & Autentikasi |
+| Azhar Khairu Hafidz | Pengembang Toko & Keranjang |
+| Aziz Faturrahman | Pengembang Pesanan & Profil |
 
 ## 📄 License
 
